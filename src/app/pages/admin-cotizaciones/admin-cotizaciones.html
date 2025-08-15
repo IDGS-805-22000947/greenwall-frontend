@@ -1,0 +1,82 @@
+<div class="container my-5">
+  <div class="card p-4">
+    <h1 class="mb-4">Gestión de Cotizaciones</h1>
+    
+    <div *ngIf="cargando" class="text-center py-5">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!cargando && cotizaciones.length > 0" class="table-responsive">
+      <table class="table table-hover align-middle admin-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Email</th>
+            <th>Metros Cuadrados</th>
+            <th>Costo Estimado</th>
+            <th>Estatus</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of cotizaciones">
+            <td>{{ c.fechaCreacion | date:'dd/MM/yyyy, h:mm a' }}</td>
+            <td>{{ c.usuario.nombreCompleto }}</td>
+            <td>{{ c.usuario.email }}</td>
+            <td>{{ c.metrosCuadrados }} m²</td>
+            <td>{{ c.costoTotal | currency:'MXN' }}</td>
+            <td>
+              <span class="badge fs-6" [ngClass]="{'bg-primary': c.estatus === 'Nueva', 'bg-success': c.estatus === 'Aprobada', 'bg-danger': c.estatus === 'Rechazada'}">
+                {{ c.estatus }}
+              </span>
+            </td>
+            <td class="text-center">
+              <ng-container *ngIf="c.estatus === 'Nueva'">
+                <button class="btn btn-sm btn-success me-2" (click)="aprobarCotizacion(c.id)" title="Aprobar y registrar salida de inventario">
+                  Aprobar
+                </button>
+                <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rechazoModal" (click)="abrirModalRechazo(c)" title="Rechazar cotización">
+                  Rechazar
+                </button>
+              </ng-container>
+              <small *ngIf="c.estatus === 'Rechazada'" class="text-muted fst-italic">
+                Motivo: {{ c.motivoRechazo }}
+              </small>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="!cargando && cotizaciones.length === 0" class="alert alert-light text-center">
+      No hay cotizaciones para gestionar por el momento.
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Rechazar Cotización -->
+<div class="modal fade" id="rechazoModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" *ngIf="cotizacionSeleccionada">
+      <div class="modal-header">
+        <h5 class="modal-title">Rechazar Cotización #{{ cotizacionSeleccionada.id }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #rechazoForm="ngForm" (ngSubmit)="confirmarRechazo()">
+          <div class="mb-3">
+            <label for="motivoRechazo" class="form-label">Por favor, escribe el motivo del rechazo:</label>
+            <textarea class="form-control" id="motivoRechazo" name="motivoRechazo" [(ngModel)]="motivoRechazo" rows="3" required></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-danger" [disabled]="rechazoForm.invalid" data-bs-dismiss="modal">Confirmar Rechazo</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

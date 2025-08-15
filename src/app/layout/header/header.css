@@ -1,0 +1,16 @@
+.navbar-brand {
+  /* Le damos un poco más de espacio vertical para que el logo escalado no se corte */
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.navbar-logo {
+  height: 40px; /* Mantiene el espacio que ocupa en el layout */
+  transition: transform 0.3s ease;
+  transform: scale(2.5); 
+}
+
+.navbar-logo:hover {
+  /* Hacemos que crezca un poco más al pasar el mouse */
+  transform: scale(2.0);
+}

@@ -1,0 +1,48 @@
+<div class="container my-5">
+  <div class="card p-4">
+    <h1 class="mb-4">Fórmula (Receta) por m²</h1>
+    <div class="row g-4">
+      <!-- Columna de la receta actual -->
+      <div class="col-lg-7">
+        <h5>Materiales Actuales en la Receta</h5>
+        <div *ngIf="cargando" class="text-center py-4"><div class="spinner-border"></div></div>
+        <div *ngIf="!cargando">
+            <ul *ngIf="receta.length > 0; else noReceta" class="list-group">
+                <li *ngFor="let item of receta" class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ item.nombre }}
+                    <div>
+                    <span class="badge bg-primary rounded-pill me-3">{{ item.cantidadPorM2 }} {{ item.unidad }}</span>
+                    <button class="btn btn-sm btn-outline-danger" (click)="eliminarIngrediente(item.materialId)">&times;</button>
+                    </div>
+                </li>
+            </ul>
+            <ng-template #noReceta>
+                <div class="alert alert-light text-center">Aún no hay materiales en la receta.</div>
+            </ng-template>
+        </div>
+      </div>
+      <!-- Columna para agregar nuevos materiales -->
+      <div class="col-lg-5">
+        <div class="card bg-light">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Agregar Material a la Receta</h5>
+            <form (ngSubmit)="agregarIngrediente()">
+              <div class="mb-3">
+                <label class="form-label">Material del Catálogo</label>
+                <select class="form-select" name="materialId" [(ngModel)]="nuevoIngrediente.materialId" required>
+                  <option [ngValue]="null" disabled>Selecciona un material...</option>
+                  <option *ngFor="let m of materialesDisponibles" [value]="m.id">{{ m.nombre }}</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Cantidad por m²</label>
+                <input type="number" class="form-control" name="cantidad" [(ngModel)]="nuevoIngrediente.cantidadPorM2" min="0.01" step="0.01" required>
+              </div>
+              <button type="submit" class="btn btn-success w-100">Agregar a Receta</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

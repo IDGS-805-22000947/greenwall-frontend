@@ -1,0 +1,60 @@
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h3 class="card-title text-center mb-4">Crear una Cuenta</h3>
+        <form #registroForm="ngForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="nombreCompleto" class="form-label">Nombre Completo</label>
+            <input type="text" class="form-control" name="nombreCompleto" [(ngModel)]="userInfo.nombreCompleto" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" name="email" [(ngModel)]="userInfo.email" required email>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input 
+              type="password" 
+              class="form-control" 
+              name="password" 
+              [(ngModel)]="userInfo.password" 
+              required 
+              minlength="6"
+              pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).*$"
+              #password="ngModel">
+            
+            <div *ngIf="password.invalid && (password.dirty || password.touched)" class="mt-2 p-2 bg-light border rounded small">
+              <p class="mb-1" [class.text-success]="password.errors?.['minlength'] == null && password.errors?.['required'] == null">
+                <i class="bi" [class.bi-check-circle-fill]="password.errors?.['minlength'] == null && password.errors?.['required'] == null" 
+                   [class.bi-x-circle-fill]="password.errors?.['minlength'] != null || password.errors?.['required'] != null"></i>
+                Al menos 6 caracteres
+              </p>
+              <p class="mb-1" [class.text-success]="!password.errors?.['pattern']">
+                <i class="bi" [class.bi-check-circle-fill]="!password.errors?.['pattern']" [class.bi-x-circle-fill]="password.errors?.['pattern']"></i>
+                Incluye mayúsculas, números y un símbolo (!, *, #, etc.)
+              </p>
+            </div>
+          </div>
+
+          <div *ngIf="serverErrors.length > 0" class="alert alert-danger">
+            <ul class="mb-0 ps-3">
+              <li *ngFor="let error of serverErrors">{{ error }}</li>
+            </ul>
+          </div>
+          <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="registroForm.invalid">Registrarme</button>
+          </div>
+
+          <div class="text-center mt-3">
+            <a routerLink="/login">¿Ya tienes cuenta? Inicia sesión</a>
+          </div>
+          
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

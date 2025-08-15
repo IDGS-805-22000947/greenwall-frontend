@@ -1,1 +1,107 @@
-/* You can add global styles to this file, and also import other style files */
+/* 1. IMPORTACIÓN DE TIPOGRAFÍA PROFESIONAL (GOOGLE FONTS) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lato:wght@400;700&display=swap');
+
+@import 'sweetalert2/src/sweetalert2.scss';
+
+
+/* 2. DEFINICIÓN DE LA PALETA DE COLORES Y VARIABLES GLOBALES */
+:root {
+  --primary-green: #2C5F2D; /* Verde bosque oscuro y profesional */
+  --accent-green: #97BC62;  /* Verde lima para acentos y hover */
+  --dark-charcoal: #222831; /* Casi negro para texto principal */
+  --medium-gray: #6c757d;   /* Gris para texto secundario */
+  --light-gray: #f8f9fa;    /* Gris muy claro para fondos */
+  --white: #ffffff;
+  --danger: #dc3545;
+  --success: #198754;
+
+  --border-radius: 0.5rem;
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease-in-out;
+}
+
+/* 3. ESTILOS BASE Y TIPOGRAFÍA */
+body {
+  font-family: 'Lato', sans-serif;
+  color: var(--dark-charcoal);
+  background-color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: var(--primary-green);
+}
+
+a {
+  color: var(--primary-green);
+  text-decoration: none;
+  transition: var(--transition);
+}
+a:hover {
+  color: var(--accent-green);
+}
+
+/* 4. REDISEÑO DE COMPONENTES DE BOOTSTRAP */
+
+/* Botones */
+.btn {
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  padding: 0.75rem 1.5rem;
+  transition: var(--transition);
+  border: none;
+  letter-spacing: 0.5px;
+}
+.btn-primary {
+  background-color: var(--primary-green);
+  color: var(--white);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #255026; /* Un poco más oscuro */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(44, 95, 45, 0.3);
+}
+.btn-success {
+  background-color: var(--accent-green);
+  color: var(--dark-charcoal);
+  font-weight: 600;
+}
+.btn-success:hover, .btn-success:focus {
+  background-color: #8ab053; /* Un poco más oscuro */
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(151, 188, 98, 0.4);
+}
+
+/* Formularios */
+.form-control, .form-select {
+  border-radius: var(--border-radius);
+  border: 1px solid #dee2e6;
+  padding: 0.75rem 1rem;
+  transition: var(--transition);
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 0.25rem rgba(151, 188, 98, 0.25);
+}
+.form-label {
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Tarjetas */
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  height: 100%; /* Para alinear tarjetas en filas */
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,39 @@
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="card-title text-center mb-4">Calcula tu Muro Verde</h2>
+          <form (ngSubmit)="calcular()">
+            <div class="mb-3">
+              <label for="metros" class="form-label">Metros Cuadrados (m²)</label>
+              <input type="number" class="form-control" name="metros" [(ngModel)]="peticion.metrosCuadrados" min="1" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary" [disabled]="cargando">{{ cargando ? 'Calculando...' : 'Calcular Costo Estimado' }}</button>
+            </div>
+          </form>
+
+          <div *ngIf="resultado && !confirmado" class="mt-4 text-center">
+            <div class="alert alert-light">
+              <p class="mb-1">Costo Estimado:</p>
+              <h3 class="fw-bold">{{ resultado.costoTotal | currency:'MXN' }}</h3>
+              <p class="small text-muted mb-3">{{ resultado.detalles }}</p>
+              <div class="d-flex justify-content-center gap-2">
+                <button class="btn btn-success" (click)="confirmar()" [disabled]="cargando">{{ cargando ? 'Enviando...' : 'Confirmar y Enviar Solicitud' }}</button>
+                <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="confirmado" class="mt-4 alert alert-success text-center">
+            <h4>¡Solicitud Enviada!</h4>
+            <p>Tu cotización ha sido enviada a nuestros asesores. Puedes ver su estatus en la sección <a routerLink="/mis-cotizaciones">"Mis Cotizaciones"</a>.</p>
+          </div>
+
+          <div *ngIf="error" class="mt-4 alert alert-danger">{{ error }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

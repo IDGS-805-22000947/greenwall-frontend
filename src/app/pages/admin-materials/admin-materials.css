@@ -1,0 +1,24 @@
+/* Estilos para las pestañas de Activos/Inactivos */
+.nav-pills .nav-link {
+  transition: all 0.3s ease;
+  color: var(--primary-green);
+}
+
+/* Color para la pestaña ACTIVA cuando está seleccionada */
+.nav-pills .nav-link.activos-tab.active {
+  background-color: var(--accent-green);
+  color: var(--dark-charcoal);
+  font-weight: 600;
+}
+
+/* Color para la pestaña INACTIVA cuando está seleccionada */
+.nav-pills .nav-link.inactivos-tab.active {
+  background-color: #ffc107; /* Amarillo verdoso (Bootstrap 'warning') */
+  color: var(--dark-charcoal);
+  font-weight: 600;
+}
+
+/* Efecto hover para las pestañas no seleccionadas */
+.nav-pills .nav-link:not(.active):hover {
+    background-color: #e9f5ee; 
+}

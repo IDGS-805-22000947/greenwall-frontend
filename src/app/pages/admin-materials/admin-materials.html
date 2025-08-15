@@ -1,0 +1,84 @@
+<div class="container my-5">
+  <div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="mb-0">Catálogo de Materiales</h1>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#materialModal" (click)="abrirModal()">
+        <i class="bi bi-plus-circle-fill me-2"></i>Agregar Nuevo Material
+      </button>
+    </div>
+
+    <ul class="nav nav-pills mb-3">
+  <li class="nav-item">
+    <a class="nav-link activos-tab" [class.active]="vistaActual === 'activos'" (click)="cambiarVista('activos')" style="cursor: pointer;">Activos</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link inactivos-tab" [class.active]="vistaActual === 'inactivos'" (click)="cambiarVista('inactivos')" style="cursor: pointer;">Inactivos</a>
+  </li>
+</ul>
+
+    <div *ngIf="vistaActual === 'activos'">
+      <div *ngIf="cargando" class="text-center py-5"><div class="spinner-border"></div></div>
+      <div *ngIf="!cargando" class="table-responsive">
+        <table class="table table-hover align-middle admin-table">
+          <thead><tr><th>ID</th><th>Nombre</th><th>Unidad</th><th class="text-center">Acciones</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let m of materialesActivos">
+              <td>{{ m.id }}</td><td>{{ m.nombre }}</td><td>{{ m.unidad }}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-warning" (click)="desactivar(m.id)">Desactivar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div *ngIf="vistaActual === 'inactivos'">
+   <div *ngIf="cargando" class="text-center py-5"><div class="spinner-border"></div></div>
+   <div *ngIf="!cargando" class="table-responsive">
+    <table class="table table-hover align-middle admin-table">
+      <thead><tr><th>ID</th><th>Nombre</th><th>Unidad</th><th class="text-center">Acciones</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let m of materialesInactivos">
+          <td>{{ m.id }}</td>
+          <td>{{ m.nombre }}</td>
+          <td>{{ m.unidad }}</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-outline-success me-2" (click)="reactivar(m.id)">Reactivar</button>
+            <button class="btn btn-sm btn-danger" (click)="borrarPermanentemente(m.id, m.nombre)">Borrar Definitivamente</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  </div>
+</div>
+
+<!-- Modal para Agregar/Editar Material -->
+<div class="modal fade" id="materialModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modoEdicion ? 'Editar Material' : 'Agregar Nuevo Material' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #materialForm="ngForm" (ngSubmit)="guardarMaterial()">
+          <div class="mb-3">
+            <label class="form-label">Nombre del Material</label>
+            <input type="text" class="form-control" name="nombre" [(ngModel)]="materialSeleccionado.nombre" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Unidad de Medida (pz, m, kg)</label>
+            <input type="text" class="form-control" name="unidad" [(ngModel)]="materialSeleccionado.unidad" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="materialForm.invalid" data-bs-dismiss="modal">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
