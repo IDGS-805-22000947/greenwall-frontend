@@ -1,0 +1,50 @@
+<div class="container my-5">
+  <h2>Mi Perfil</h2>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Mis Datos</div>
+        <div class="card-body">
+          <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()">
+            <div class="mb-3">
+              <label class="form-label">Correo Electrónico (Usuario)</label>
+              <input type="email" class="form-control" [value]="emailUsuario" readonly disabled>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nombre Completo</label>
+              <input type="text" formControlName="nombreCompleto" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nombre de la Empresa</label>
+              <input type="text" formControlName="nombreEmpresa" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Teléfono</label>
+              <input type="tel" formControlName="telefono" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="perfilForm.invalid">Guardar Cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">Cambiar Contraseña</div>
+        <div class="card-body">
+          <form [formGroup]="passwordForm" (ngSubmit)="cambiarPassword()">
+            <div class="mb-3">
+              <label class="form-label">Contraseña Actual</label>
+              <input type="password" formControlName="passwordActual" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nueva Contraseña</label>
+              <input type="password" formControlName="nuevoPassword" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="passwordForm.invalid">Cambiar Contraseña</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,48 +1,144 @@
 <div class="container my-5">
-  <div class="card p-4">
-    <h1 class="mb-4">Fórmula (Receta) por m²</h1>
-    <div class="row g-4">
-      <!-- Columna de la receta actual -->
-      <div class="col-lg-7">
-        <h5>Materiales Actuales en la Receta</h5>
-        <div *ngIf="cargando" class="text-center py-4"><div class="spinner-border"></div></div>
-        <div *ngIf="!cargando">
-            <ul *ngIf="receta.length > 0; else noReceta" class="list-group">
-                <li *ngFor="let item of receta" class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ item.nombre }}
-                    <div>
-                    <span class="badge bg-primary rounded-pill me-3">{{ item.cantidadPorM2 }} {{ item.unidad }}</span>
-                    <button class="btn btn-sm btn-outline-danger" (click)="eliminarIngrediente(item.materialId)">&times;</button>
-                    </div>
-                </li>
-            </ul>
-            <ng-template #noReceta>
-                <div class="alert alert-light text-center">Aún no hay materiales en la receta.</div>
-            </ng-template>
+  <h1 class="mb-4">Gestión de Recetas</h1>
+
+  <ul class="nav nav-tabs" id="recetaTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#gestion" type="button">1. Administrar Recetas</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#editor" type="button">2. Editor de Materiales</button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="recetaTabContent">
+    
+    <div class="tab-pane fade show active" id="gestion" role="tabpanel">
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label">Selecciona un Producto para ver sus recetas:</label>
+              <select class="form-select" (change)="onProductoSelect($event)">
+                <option value="" selected>-- Elige un producto --</option>
+                <option *ngFor="let p of productos" [value]="p.id">{{ p.nombre }}</option>
+              </select>
+            </div>
+            <div class="col-md-6 text-end align-self-end">
+              <button class="btn btn-success" [disabled]="!productoSeleccionadoId" data-bs-toggle="modal" data-bs-target="#recetaModal" (click)="abrirModalReceta()">
+                <i class="fas fa-plus me-2"></i>Crear Nueva Receta
+              </button>
+            </div>
+          </div>
+          
+          <hr *ngIf="productoSeleccionadoId">
+          
+          <table *ngIf="productoSeleccionadoId" class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Nombre de la Receta</th>
+                <th class="text-center">Estado</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of recetasDelProducto" [class.table-success]="r.isActiva">
+                <td>
+                  {{ r.nombre }}
+                  <i *ngIf="r.isActiva" class="fas fa-check-circle text-success ms-2" title="Esta es la receta activa para las cotizaciones"></i>
+                </td>
+                <td class="text-center">
+                  <span class="badge" [ngClass]="r.isActiva ? 'bg-success' : 'bg-secondary'">
+                    {{ r.isActiva ? 'Activa' : 'Inactiva' }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-secondary" title="Editar" data-bs-toggle="modal" data-bs-target="#recetaModal" (click)="abrirModalReceta(r)">
+                      <i class="fas fa-edit me-1"></i> Editar
+                    </button>
+                    <button *ngIf="!r.isActiva" class="btn btn-sm btn-outline-success" title="Activar Receta" (click)="activarReceta(r.id)">
+                      <i class="fas fa-power-off me-1"></i> Activar
+                    </button>
+                    <button *ngIf="r.isActiva" class="btn btn-sm btn-outline-warning" title="Desactivar Receta" (click)="desactivarReceta(r)">
+                      <i class="fas fa-power-off me-1"></i> Desactivar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <!-- Columna para agregar nuevos materiales -->
-      <div class="col-lg-5">
-        <div class="card bg-light">
-          <div class="card-body">
-            <h5 class="card-title mb-3">Agregar Material a la Receta</h5>
-            <form (ngSubmit)="agregarIngrediente()">
-              <div class="mb-3">
-                <label class="form-label">Material del Catálogo</label>
-                <select class="form-select" name="materialId" [(ngModel)]="nuevoIngrediente.materialId" required>
-                  <option [ngValue]="null" disabled>Selecciona un material...</option>
-                  <option *ngFor="let m of materialesDisponibles" [value]="m.id">{{ m.nombre }}</option>
-                </select>
+    </div>
+
+    <div class="tab-pane fade" id="editor" role="tabpanel">
+      <div class="card mt-3">
+        <div class="card-body">
+          <label class="form-label">Selecciona una Receta para editar sus materiales:</label>
+          <select class="form-select mb-3" (change)="onRecetaSelect($event)">
+            <option value="" selected>-- Elige una receta --</option>
+            <option *ngFor="let r of recetasDelProducto" [value]="r.id">
+              {{ r.nombre }}
+            </option>
+          </select>
+          
+          <div *ngIf="recetaParaEditar">
+            <form [formGroup]="editorForm" (ngSubmit)="guardarDetalles()">
+              <div class="row fw-bold mb-2 d-none d-md-flex">
+                <div class="col-5">Material</div>
+                <div class="col-2">Cantidad</div>
+                <div class="col-3">Alcance (m²)</div>
+                <div class="col-2"></div>
               </div>
-              <div class="mb-3">
-                <label class="form-label">Cantidad por m²</label>
-                <input type="number" class="form-control" name="cantidad" [(ngModel)]="nuevoIngrediente.cantidadPorM2" min="0.01" step="0.01" required>
+              <div formArrayName="detalles">
+                <div *ngFor="let detalle of detalles.controls; let i=index" [formGroupName]="i" class="row align-items-center mb-2">
+                  <div class="col-md-5">
+                    <select formControlName="materialId" class="form-select">
+                      <option [ngValue]="null" disabled>Selecciona un material...</option>
+                      <option *ngFor="let m of catalogoMateriales" [value]="m.id">{{m.nombre}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2"><input type="number" formControlName="cantidad" class="form-control" step="0.01"></div>
+                  <div class="col-md-3"><input type="number" formControlName="alcance" class="form-control" placeholder="Opcional" step="0.01"></div>
+                  <div class="col-md-2"><button type="button" class="btn btn-danger btn-sm" (click)="eliminarMaterial(i)">Quitar</button></div>
+                </div>
               </div>
-              <button type="submit" class="btn btn-success w-100">Agregar a Receta</button>
+              <button type="button" class="btn btn-outline-primary mt-2" (click)="agregarMaterial()">+ Agregar Material</button>
             </form>
           </div>
         </div>
+        <div class="card-footer text-end" *ngIf="recetaParaEditar">
+          <button class="btn btn-primary" (click)="guardarDetalles()" [disabled]="editorForm.invalid">Guardar Cambios en Materiales</button>
+        </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="recetaModal" tabindex="-1" aria-labelledby="recetaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="recetaModalLabel">{{ modoEdicionReceta ? 'Editar Receta' : 'Nueva Receta' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form [formGroup]="recetaForm" (ngSubmit)="guardarReceta()">
+        <div class="modal-body">
+          <input type="hidden" formControlName="productoId">
+          <div class="mb-3">
+            <label class="form-label">Nombre de la Receta</label>
+            <input type="text" formControlName="nombre" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea formControlName="descripcion" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="recetaForm.invalid" data-bs-dismiss="modal">Guardar</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

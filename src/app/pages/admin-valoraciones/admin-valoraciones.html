@@ -1,0 +1,25 @@
+<div class="container my-5">
+  <h1 class="mb-4">Gestionar Opiniones Pendientes</h1>
+
+  <div *ngIf="valoracionesPendientes.length === 0" class="alert alert-info">
+    No hay opiniones pendientes de revisión.
+  </div>
+
+  <div *ngFor="let v of valoracionesPendientes" class="card mb-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between">
+        <h5 class="card-title">{{ v.nombreUsuario }}</h5>
+        <div>
+          <i *ngFor="let star of [].constructor(v.calificacion)" class="fas fa-star text-warning"></i>
+          <i *ngFor="let star of [].constructor(5 - v.calificacion)" class="far fa-star text-warning"></i>
+        </div>
+      </div>
+      <p class="card-text">"{{ v.comentario }}"</p>
+      <small class="text-muted">{{ v.fechaCreacion | date:'fullDate' }}</small>
+    </div>
+    <div class="card-footer text-end">
+      <button class="btn btn-danger me-2" (click)="rechazar(v.id)">Rechazar</button>
+      <button class="btn btn-success" (click)="aprobar(v.id)">Aprobar</button>
+    </div>
+  </div>
+</div>

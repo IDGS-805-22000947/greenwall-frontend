@@ -1,0 +1,361 @@
+<div class="container my-5">
+	<h1 class="mb-4">Gestión de Proveedores y Materiales</h1>
+
+	<ul class="nav nav-tabs" id="gestionTab" role="tablist">
+		<li class="nav-item" role="presentation">
+			<button class="nav-link active" id="proveedores-tab" data-bs-toggle="tab" data-bs-target="#proveedores-panel" type="button" role="tab" aria-controls="proveedores-panel" aria-selected="true">1. Proveedores</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="materiales-tab" data-bs-toggle="tab" data-bs-target="#materiales-panel" type="button" role="tab" aria-controls="materiales-panel" aria-selected="false">2. Catálogo de Materiales</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="asociar-tab" data-bs-toggle="tab" data-bs-target="#asociar-panel" type="button" role="tab" aria-controls="asociar-panel" aria-selected="false">3. Asociar Materiales</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="compras-tab" data-bs-toggle="tab" data-bs-target="#compras-panel" type="button" role="tab" aria-controls="compras-panel" aria-selected="false">4. Historial de Compras</button>
+		</li>
+	</ul>
+
+	<div class="tab-content" id="gestionTabContent">
+
+		<div class="tab-pane fade show active" id="proveedores-panel" role="tabpanel" aria-labelledby="proveedores-tab">
+			<div class="card mt-3">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<h5 class="card-title mb-0">Administración de Proveedores</h5>
+						<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#proveedorModal" (click)="abrirModalProveedor()">
+							<i class="fas fa-plus me-2"></i>Nuevo Proveedor
+						</button>
+					</div>
+
+					<ul class="nav nav-pills mb-3" id="proveedoresSubTab" role="tablist">
+						<li class="nav-item" role="presentation">
+							<button class="nav-link active" id="proveedores-activos-tab" data-bs-toggle="tab" data-bs-target="#proveedores-activos-panel" type="button" role="tab" aria-controls="proveedores-activos-panel" aria-selected="true">
+								Activos <span class="badge bg-secondary">{{proveedoresActivos.length}}</span>
+							</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button class="nav-link" id="proveedores-inactivos-tab" data-bs-toggle="tab" data-bs-target="#proveedores-inactivos-panel" type="button" role="tab" aria-controls="proveedores-inactivos-panel" aria-selected="false">
+								Inactivos <span class="badge bg-light text-dark">{{proveedoresInactivos.length}}</span>
+							</button>
+						</li>
+					</ul>
+
+					<div class="tab-content" id="proveedoresSubTabContent">
+						<div class="tab-pane fade show active" id="proveedores-activos-panel" role="tabpanel" aria-labelledby="proveedores-activos-tab">
+							<div class="table-responsive">
+								<table class="table table-hover align-middle">
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>RFC</th>
+											<th>Email</th>
+											<th>Teléfono</th>
+											<th class="text-center">Acciones</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr *ngFor="let p of proveedoresActivos">
+											<td>{{p.nombre}}</td>
+											<td>{{p.rfc}}</td>
+											<td>{{p.email || 'N/A'}}</td>
+											<td>{{p.telefono || 'N/A'}}</td>
+											<td class="text-center">
+												<div class="btn-group" role="group">
+													<button class="btn btn-sm btn-outline-secondary" title="Editar" data-bs-toggle="modal" data-bs-target="#proveedorModal" (click)="abrirModalProveedor(p)">
+														<i class="fas fa-edit me-1"></i> Editar
+													</button>
+													<button class="btn btn-sm btn-outline-danger" title="Desactivar" (click)="desactivarProveedor(p.id)">
+														<i class="fas fa-trash-alt me-1"></i> Desactivar
+													</button>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="proveedores-inactivos-panel" role="tabpanel" aria-labelledby="proveedores-inactivos-tab">
+							<div class="table-responsive">
+								<table class="table table-hover align-middle">
+									<thead>
+										<tr>
+											<th>Nombre</th>
+											<th>RFC</th>
+											<th class="text-end">Acciones</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr *ngFor="let p of proveedoresInactivos">
+											<td>{{p.nombre}}</td>
+											<td>{{p.rfc}}</td>
+											<td class="text-end">
+												<button class="btn btn-sm btn-success" title="Reactivar" (click)="reactivarProveedor(p.id)">
+													<i class="fas fa-check-circle me-1"></i> Reactivar
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="materiales-panel" role="tabpanel" aria-labelledby="materiales-tab">
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">Catálogo Maestro de Materiales</h5>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#materialModal" (click)="abrirModalMaterial()">
+                    <i class="fas fa-plus me-2"></i>Agregar Nuevo Material
+                </button>
+            </div>
+
+            <ul class="nav nav-pills mb-3" id="materialesSubTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="materiales-activos-tab" data-bs-toggle="tab" data-bs-target="#materiales-activos-panel" type="button" role="tab" aria-controls="materiales-activos-panel" aria-selected="true">
+                        Activos <span class="badge bg-secondary">{{materialesActivos.length}}</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="materiales-inactivos-tab" data-bs-toggle="tab" data-bs-target="#materiales-inactivos-panel" type="button" role="tab" aria-controls="materiales-inactivos-panel" aria-selected="false">
+                        Inactivos <span class="badge bg-light text-dark">{{materialesInactivos.length}}</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="materialesSubTabContent">
+                <div class="tab-pane fade show active" id="materiales-activos-panel" role="tabpanel" aria-labelledby="materiales-activos-tab">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Unidad</th>
+                                    <th>Stock Actual</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let m of materialesActivos">
+                                    <td>{{ m.nombre }}</td>
+                                    <td>{{ m.unidad }}</td>
+                                    <td>{{ m.stockActual }}</td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-secondary" title="Editar" data-bs-toggle="modal" data-bs-target="#materialModal" (click)="abrirModalMaterial(m)">
+                                                <i class="fas fa-edit me-1"></i> Editar
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Desactivar" (click)="desactivarMaterial(m.id)">
+                                                <i class="fas fa-trash-alt me-1"></i> Desactivar
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="materiales-inactivos-panel" role="tabpanel" aria-labelledby="materiales-inactivos-tab">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Unidad</th>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let m of materialesInactivos">
+                                    <td>{{ m.nombre }}</td>
+                                    <td>{{ m.unidad }}</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-success" title="Reactivar" (click)="reactivarMaterial(m.id)">
+                                            <i class="fas fa-check-circle me-1"></i> Reactivar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+		<div class="tab-pane fade" id="asociar-panel" role="tabpanel" aria-labelledby="asociar-tab">
+			<div class="card mt-3">
+				<div class="card-body">
+					<h5 class="card-title">Asociar Materiales a un Proveedor</h5>
+					<p class="card-text">Selecciona un proveedor para ver y modificar los materiales que puede surtir.</p>
+					<div class="mb-3">
+						<label class="form-label">Proveedor:</label>
+						<select class="form-select" (change)="onProveedorSelect($event)">
+							<option value="" selected>-- Elige un proveedor --</option>
+							<option *ngFor="let p of proveedoresParaAsociar" [value]="p.id">{{ p.nombre }}</option>
+						</select>
+					</div>
+					<div *ngIf="proveedorSeleccionadoId" class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Asociado</th>
+									<th>ID</th>
+									<th>Nombre del Material</th>
+									<th>Unidad</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let m of materialesMaestro">
+									<td>
+										<div class="form-check">
+											<input class="form-check-input" type="checkbox" [checked]="materialesAsociadosIds.has(m.id)" (change)="onMaterialToggle(m.id, $event)">
+										</div>
+									</td>
+									<td>{{ m.id }}</td>
+									<td>{{ m.nombre }}</td>
+									<td>{{ m.unidad }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="card-footer text-end" *ngIf="proveedorSeleccionadoId">
+					<button class="btn btn-primary" (click)="guardarAsociaciones()">Guardar Asociaciones</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane fade" id="compras-panel" role="tabpanel" aria-labelledby="compras-tab">
+			<div class="card mt-3">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<h5 class="card-title mb-0">Historial de Compras</h5>
+						
+					</div>
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Fecha</th>
+									<th>Proveedor</th>
+									<th># Items</th>
+									<th class="text-end">Total</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let c of historialCompras" style="cursor: pointer;">
+									<td>#{{c.id}}</td>
+									<td>{{c.fechaCompra | date:'dd/MM/yyyy h:mm a'}}</td>
+									<td>{{c.nombreProveedor}}</td>
+									<td>{{c.cantidadItems}}</td>
+									<td class="text-end">{{c.total | currency}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="proveedorModal" tabindex="-1" aria-labelledby="proveedorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="proveedorModalLabel">{{ modoEdicionProveedor ? 'Editar Proveedor' : 'Nuevo Proveedor' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="proveedorForm.reset()"></button>
+      </div>
+      <form [formGroup]="proveedorForm" (ngSubmit)="guardarProveedor()">
+        <div class="modal-body">
+          
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" formControlName="nombre" class="form-control"
+                   [class.is-invalid]="f.nombre.invalid && (f.nombre.dirty || f.nombre.touched)">
+            <div *ngIf="f.nombre.invalid && (f.nombre.dirty || f.nombre.touched)" class="invalid-feedback">
+              <div *ngIf="f.nombre.errors?.['required']">El nombre es obligatorio.</div>
+              <div *ngIf="f.nombre.errors?.['minlength']">Debe tener al menos 3 caracteres.</div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+  <label for="rfc" class="form-label">RFC</label>
+  <input type="text" 
+         id="rfc" 
+         formControlName="rfc" 
+         class="form-control"
+         maxlength="13"
+         (input)="toUpperCase($event)"
+         [class.is-invalid]="f.rfc.invalid && (f.rfc.dirty || f.rfc.touched)">
+  
+  <div *ngIf="f.rfc.invalid && (f.rfc.dirty || f.rfc.touched)" class="invalid-feedback">
+      <div *ngIf="f.rfc.errors?.['required']">El RFC es obligatorio.</div>
+      <div *ngIf="f.rfc.errors?.['minlength'] || f.rfc.errors?.['maxlength']">El RFC debe tener exactamente 13 caracteres.</div>
+      <div *ngIf="f.rfc.errors?.['pattern']">El RFC solo debe contener mayúsculas y números.</div>
+  </div>
+</div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" formControlName="email" class="form-control"
+                   [class.is-invalid]="f.email.invalid && (f.email.dirty || f.email.touched)">
+            <div *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)" class="invalid-feedback">
+              <div *ngIf="f.email.errors?.['required']">El email es obligatorio.</div>
+              <div *ngIf="f.email.errors?.['email']">El formato no es válido.</div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="tel" formControlName="telefono" class="form-control"
+                   [class.is-invalid]="f.telefono.invalid && (f.telefono.dirty || f.telefono.touched)">
+            <div *ngIf="f.telefono.invalid && (f.telefono.dirty || f.telefono.touched)" class="invalid-feedback">
+              <div *ngIf="f.telefono.errors?.['required']">El teléfono es obligatorio.</div>
+              <div *ngIf="f.telefono.errors?.['pattern']">Debe contener 10 dígitos.</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="proveedorForm.reset()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="proveedorForm.invalid" data-bs-dismiss="modal">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="materialModal" tabindex="-1" aria-labelledby="materialModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="materialModalLabel">{{ modoEdicionMaterial ? 'Editar Material' : 'Nuevo Material' }}</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form [formGroup]="materialForm" (ngSubmit)="guardarMaterial()">
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">Nombre</label>
+						<input type="text" formControlName="nombre" class="form-control">
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Unidad</label>
+						<input type="text" formControlName="unidad" class="form-control">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+					<button type="submit" class="btn btn-primary" [disabled]="materialForm.invalid" data-bs-dismiss="modal">Guardar</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

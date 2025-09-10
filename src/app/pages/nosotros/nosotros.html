@@ -1,10 +1,94 @@
 <div class="container my-5">
-  <div class="row align-items-center">
-    <div class="col-lg-6">
-      <h1 class="display-4 fw-bold lh-1 mb-3">Somos GreenWall</h1>
-      <p class="lead">Nacimos de la convicción de que la tecnología y la naturaleza pueden coexistir para crear un futuro más verde y saludable. En GreenWall, no solo construimos muros verdes; diseñamos ecosistemas vivos que se integran perfectamente en espacios urbanos, desde residencias privadas hasta grandes corporativos.</p>
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border text-success" style="width: 3rem; height: 3rem;"></div>
+  </div>
+
+  <div *ngIf="!cargando && producto">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-7">
+        <img [src]="producto.imagenUrl" class="img-fluid rounded shadow-lg" alt="{{ producto.nombre }}">
+      </div>
+      <div class="col-lg-5">
+        <h1 class="display-4">{{ producto.nombre }}</h1>
+        <p class="lead text-muted">{{ producto.descripcion }}</p>
+        <hr>
+        <div class="d-grid gap-2">
+          
+          <ng-container *ngIf="isLoggedIn && isCliente; else publicView">
+            <a [href]="producto.manualUrl" target="_blank" class="btn btn-primary">Ver Manual de Usuario</a>
+            <a [href]="producto.documentacionUrl" target="_blank" class="btn btn-secondary">Ver Documentación Adicional</a>
+          </ng-container>
+    
+          <ng-template #publicView>
+            <a [href]="producto.documentoUrl" target="_blank" class="btn btn-secondary">Descargar Ficha Técnica</a>
+          </ng-template>
+          <a routerLink="/cotizacion" class="btn btn-success mt-2">Calcular mi Proyecto ahora</a>
+        </div>
+      </div>
     </div>
-    <div class="col-lg-6">
-      <img src="/assets/images/carousel-2.jpg" class="img-fluid rounded-3 shadow" alt="Un muro verde frondoso en una oficina moderna">    </div>
+
+    <hr class="my-5">
+
+    <div class="row g-lg-5">
+      <div class="col-lg-6">
+  <h2 class="display-5 mb-4 text-center">Opiniones de Nuestros Clientes</h2>
+
+  <div *ngIf="isCliente && estadoMiValoracion">
+    <div *ngIf="estadoMiValoracion.puedeOpinar; else noPuedeOpinar" id="form-valoracion" class="card bg-light mb-4 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">¡Comparte tu experiencia!</h5>
+        <form [formGroup]="valoracionForm" (ngSubmit)="enviarOpinion()">
+          <div class="mb-3">
+            <label class="form-label">Calificación:</label>
+            <div class="star-rating">
+              <button *ngFor="let star of [1, 2, 3, 4, 5]" type="button" class="btn btn-link star" (click)="setCalificacion(star)" [class.selected]="valoracionForm.get('calificacion')?.value >= star">
+                <i class="fas fa-star"></i>
+              </button>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="comentario" class="form-label">Comentario:</label>
+            <textarea id="comentario" class="form-control" rows="3" formControlName="comentario" placeholder="Escribe tu opinión aquí..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-success" [disabled]="valoracionForm.invalid">Enviar Opinión</button>
+        </form>
+      </div>
+    </div>
+    <ng-template #noPuedeOpinar>
+      <div class="alert alert-info text-center">
+        <i class="fas fa-check-circle me-2"></i>{{ estadoMiValoracion.mensaje }}
+      </div>
+    </ng-template>
   </div>
+
+  <div *ngIf="valoracionesAprobadas.length > 0; else noValoraciones" class="valoraciones-wrapper">
+    <div *ngFor="let v of valoracionesAprobadas" class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <h6 class="card-title">{{ v.nombreUsuario }}</h6>
+          <div class="star-rating-display">
+            <i *ngFor="let star of [].constructor(v.calificacion)" class="fas fa-star text-warning"></i>
+            <i *ngFor="let star of [].constructor(5 - v.calificacion)" class="far fa-star text-warning"></i>
+          </div>
+        </div>
+        <p class="card-text">"{{ v.comentario }}"</p>
+        <small class="text-muted">{{ v.fechaCreacion | date:'dd \'de\' MMMM, yyyy' }}</small>
+      </div>
+    </div>
   </div>
+  <ng-template #noValoraciones>
+    <p class="text-center text-muted mt-4">Aún no hay opiniones públicas. ¡Anímate y sé el primero!</p>
+  </ng-template>
+</div>
+
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <div *ngIf="videoUrlSeguro">
+          <h2 class="display-5 mb-4 text-center">Ver más Información</h2>
+          <div class="ratio ratio-16x9 shadow-lg rounded">
+            <iframe [src]="videoUrlSeguro" title="Demostración del Producto" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

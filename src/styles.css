@@ -105,3 +105,32 @@ a:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
+
+
+/* --- ✨ INICIO: CÓDIGO DE MAQUETACIÓN FINAL (CON CSS GRID) ✨ --- */
+
+/* 1. Aseguramos que el html y el body ocupen el 100% de la altura */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* 2. El contenedor principal de la aplicación, ahora usando Grid */
+.app-wrapper {
+  display: grid;
+  /* Define 3 filas: 
+     - El header (auto) toma el espacio que necesita.
+     - El contenido (1fr) toma TODO el espacio restante.
+     - El footer (auto) toma el espacio que necesita.
+  */
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh; /* Ocupa como mínimo toda la altura de la pantalla */
+}
+
+
+/* Regla para asegurar que los botones de acción en tablas de admin sean siempre visibles */
+.table .btn-group,
+.table .btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+}

@@ -1,3 +1,5 @@
+// src/app/layout/header/header.ts
+
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -18,9 +20,12 @@ export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
+    // Controla si se muestra "Login" o "Logout"
     this.isLoggedIn$ = this.authService.isLoggedIn$;
-    this.isAdmin$ = this.isLoggedIn$.pipe(
-      map(() => this.authService.getUserRole() === 'Administrador')
+
+    
+    this.isAdmin$ = this.authService.userRole$.pipe(
+      map(role => role === 'Administrador')
     );
   }
 

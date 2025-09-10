@@ -1,0 +1,33 @@
+<div class="container my-5">
+  <h1 class="mb-4">Mi Historial de Compras</h1>
+  
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!cargando && compras.length > 0" class="table-responsive">
+    <table class="table table-hover align-middle">
+          <thead class="table-light">
+      <tr>
+        <th>ID de Venta</th>
+        <th>Fecha de Compra</th>
+        <th>Producto Adquirido</th>
+        <th class="text-end">Total Pagado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let compra of compras">
+        <td>#{{ compra.id }}</td>
+        <td>{{ compra.fechaVenta | date:'dd/MM/yyyy' }}</td>
+        <td>{{ compra.productoNombre }}</td> <td class="text-end fw-bold">{{ compra.total | currency:'MXN' }}</td>
+      </tr>
+    </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!cargando && compras.length === 0" class="alert alert-info">
+    Aún no has realizado ninguna compra. Las cotizaciones aprobadas se pueden convertir en compras desde <a routerLink="/mis-cotizaciones">"Mis Cotizaciones"</a>.
+  </div>
+</div>

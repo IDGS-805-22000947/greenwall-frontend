@@ -1,7 +1,11 @@
+// src/app/services/cotizacion.service.ts
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../enviroments/environment';
+import { PeticionCotizacion, ResultadoCotizacion } from '../models/cotizacion.model';
+import { MisCotizaciones } from '../models/mis-cotizaciones.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,20 +15,20 @@ export class CotizacionService {
 
   constructor(private http: HttpClient) { }
 
-  // --- MÉTODOS PARA EL CLIENTE ---
-  previsualizarCotizacion(peticion: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/previsualizar`, peticion);
+  // --- MÉTODOS PARA EL CLIENTE (Ahora con tipos de datos correctos) ---
+  previsualizarCotizacion(peticion: PeticionCotizacion): Observable<ResultadoCotizacion> {
+    return this.http.post<ResultadoCotizacion>(`${this.apiUrl}/previsualizar`, peticion);
   }
 
-  confirmarCotizacion(peticion: any): Observable<any> {
+  confirmarCotizacion(peticion: PeticionCotizacion): Observable<any> {
     return this.http.post(`${this.apiUrl}/confirmar`, peticion);
   }
 
-  getMisCotizaciones(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/mis-cotizaciones`);
+  getMisCotizaciones(): Observable<MisCotizaciones[]> { // <-- Usa el nuevo modelo
+    return this.http.get<MisCotizaciones[]>(`${this.apiUrl}/mis-cotizaciones`);
   }
   
-  // --- MÉTODOS PARA EL ADMINISTRADOR ---
+  // --- MÉTODOS PARA EL ADMINISTRADOR (se mantienen igual) ---
   obtenerTodasLasCotizaciones(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/todas`);
   }

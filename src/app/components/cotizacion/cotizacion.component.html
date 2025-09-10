@@ -3,14 +3,33 @@
     <div class="col-lg-6">
       <div class="card shadow-sm">
         <div class="card-body p-4">
-          <h2 class="card-title text-center mb-4">Calcula tu Muro Verde</h2>
+          <h2 class="card-title text-center mb-4">Calcula tu Proyecto</h2>
           <form (ngSubmit)="calcular()">
+  
             <div class="mb-3">
-              <label for="metros" class="form-label">Metros Cuadrados (m²)</label>
-              <input type="number" class="form-control" name="metros" [(ngModel)]="peticion.metrosCuadrados" min="1" required>
+              <label for="producto" class="form-label">Elige tu Producto</label>
+              <select id="producto" class="form-select" name="productoId" 
+                      [(ngModel)]="peticion.productoId" 
+                      (ngModelChange)="onProductoChange($event)" required>
+                <option *ngFor="let p of productos" [value]="p.id">{{ p.nombre }}</option>
+              </select>
             </div>
+
+            <div *ngIf="productoSeleccionado">
+              <div *ngIf="productoSeleccionado.unidadDeVenta === 'm²'" class="mb-3">
+                <label for="metros" class="form-label">Metros Cuadrados (m²)</label>
+                <input type="number" class="form-control" name="metros" [(ngModel)]="peticion.metrosCuadrados" min="1" required>
+              </div>
+              <div *ngIf="productoSeleccionado.unidadDeVenta === 'unidad'" class="mb-3">
+                <label for="unidades" class="form-label">Cantidad de Unidades</label>
+                <input type="number" class="form-control" name="unidades" [(ngModel)]="peticion.cantidadUnidades" min="1" required>
+              </div>
+            </div>
+
             <div class="d-grid">
-              <button type="submit" class="btn btn-primary" [disabled]="cargando">{{ cargando ? 'Calculando...' : 'Calcular Costo Estimado' }}</button>
+              <button type="submit" class="btn btn-primary" [disabled]="cargando || !productoSeleccionado">
+                {{ cargando ? 'Calculando...' : 'Calcular Costo Estimado' }}
+              </button>
             </div>
           </form>
 

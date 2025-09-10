@@ -1,0 +1,35 @@
+/* Contenedor principal para las estrellas */
+.star-rating {
+  display: inline-block;
+}
+
+/* Estilo base para cada estrella (botón) */
+.star-rating .star {
+  color: #d3d3d3; /* Color gris para estrellas 'apagadas' */
+  font-size: 2rem;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+  padding: 0 0.1rem;
+  text-decoration: none; /* Quita el subrayado del botón */
+  border: none; /* Quita el borde del botón */
+  background: none; /* Quita el fondo del botón */
+  box-shadow: none; /* Quita cualquier sombra */
+}
+
+/* --- LÓGICA VISUAL --- */
+
+/* 1. Cuando una estrella está seleccionada (tiene la clase .selected), se pinta de amarillo */
+.star-rating .star.selected {
+  color: #ffc107; /* Color dorado para estrellas 'prendidas' */
+}
+
+/* 2. EFECTO HOVER: Al pasar el mouse sobre CUALQUIER estrella... */
+.star-rating:hover .star {
+  color: #ffc107; /* ...todas se pintan de amarillo */
+}
+
+/* 3. ...pero las estrellas que vienen DESPUÉS de la que tiene el mouse encima, se vuelven a pintar de gris. */
+/* Esto crea el efecto de que solo se iluminan las de la izquierda. */
+.star-rating .star:hover ~ .star {
+  color: #d3d3d3;
+}

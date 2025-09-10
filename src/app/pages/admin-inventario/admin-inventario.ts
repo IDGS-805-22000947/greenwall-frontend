@@ -1,8 +1,9 @@
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MaterialesService } from '../../services/materiales';
-import { InventarioService } from '../../services/inventario';
+import { MaterialesService } from '../../services/materiales'; 
+import { InventarioService } from '../../services/inventario'; 
 import Swal from 'sweetalert2';
 
 @Component({
@@ -18,10 +19,10 @@ export class AdminInventarioComponent implements OnInit {
   materialSeleccionadoId: number | null = null;
   cargandoHistorial = false;
 
-  nuevaEntrada = {
+  nuevoAjuste = {
     materialId: 0,
-    cantidad: 1,
-    costoUnitario: 0
+    cantidad: 0,
+    motivo: ''
   };
 
   constructor(
@@ -46,7 +47,7 @@ export class AdminInventarioComponent implements OnInit {
     }
     
     this.materialSeleccionadoId = materialId;
-    this.nuevaEntrada.materialId = materialId;
+    this.nuevoAjuste.materialId = materialId; // Prepara el objeto de ajuste
     this.cargarHistorial();
   }
   
@@ -59,22 +60,27 @@ export class AdminInventarioComponent implements OnInit {
     });
   }
 
-  registrarEntrada(): void {
-    if (this.nuevaEntrada.cantidad <= 0 || this.nuevaEntrada.costoUnitario <= 0) {
-      Swal.fire('Datos Inválidos', 'La cantidad y el costo deben ser mayores a cero.', 'error');
+  realizarAjuste(): void {
+    if (this.nuevoAjuste.cantidad === 0) {
+      Swal.fire('Dato Inválido', 'La cantidad no puede ser cero.', 'error');
       return;
     }
-    this.inventarioService.registrarEntrada(this.nuevaEntrada).subscribe(() => {
-      Swal.fire({
-        title: '¡Éxito!',
-        text: 'La entrada de inventario ha sido registrada.',
-        icon: 'success',
-        timer: 2000,
-        showConfirmButton: false
-      });
-      this.cargarHistorial();
-      this.nuevaEntrada.cantidad = 1;
-      this.nuevaEntrada.costoUnitario = 0;
+    if (!this.nuevoAjuste.motivo || this.nuevoAjuste.motivo.trim().length < 5) {
+      Swal.fire('Dato Inválido', 'Debes proporcionar un motivo de al menos 5 caracteres.', 'error');
+      return;
+    }
+
+    this.inventarioService.realizarAjuste(this.nuevoAjuste).subscribe({
+      next: () => {
+        Swal.fire('¡Éxito!', 'El ajuste de inventario ha sido registrado.', 'success');
+        this.cargarHistorial();
+        // Resetea el formulario de ajuste
+        this.nuevoAjuste.cantidad = 0;
+        this.nuevoAjuste.motivo = '';
+      },
+      error: (err) => {
+        Swal.fire('Error', err.error, 'error');
+      }
     });
   }
 }

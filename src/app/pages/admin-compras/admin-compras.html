@@ -1,0 +1,101 @@
+<div class="container mt-4">
+  <div *ngIf="vistaActual === 'lista'">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Gestión de Compras</h1>
+      <button class="btn btn-primary" (click)="cambiarVista('formulario')">
+        <i class="fas fa-plus me-2"></i>Registrar Compra
+      </button>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <div *ngIf="!cargando && compras.length > 0" class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Proveedor</th>
+            <th># Items</th>
+            <th class="text-end">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of compras" (click)="verDetalle(c.id)" style="cursor: pointer;">
+            <td>#{{c.id}}</td>
+            <td>{{c.fechaCompra | date:'dd/MM/yyyy h:mm a'}}</td>
+            <td>{{c.nombreProveedor}}</td>
+            <td>{{c.cantidadItems}}</td>
+            <td class="text-end">{{c.total | currency}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="!cargando && compras.length === 0" class="alert alert-info">
+      No hay compras registradas.
+    </div>
+  </div>
+
+  <div *ngIf="vistaActual === 'formulario'">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>Registrar Nueva Compra</h1>
+      <button class="btn btn-secondary" (click)="cambiarVista('lista')">
+        <i class="fas fa-arrow-left me-2"></i>Volver al listado
+      </button>
+    </div>
+
+    <form [formGroup]="compraForm" (ngSubmit)="guardarCompra()">
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="proveedorId" class="form-label">Proveedor</label>
+            <select id="proveedorId" formControlName="proveedorId" class="form-select">
+              <option value="" disabled>Selecciona un proveedor...</option>
+              <option *ngFor="let p of proveedores" [value]="p.id">{{p.nombre}}</option>
+            </select>
+          </div>
+
+          <hr>
+          <h5>Detalles de la Compra</h5>
+          
+          <div formArrayName="detalles">
+            <div *ngFor="let detalle of detalles.controls; let i=index" [formGroupName]="i" class="row align-items-center mb-2">
+              <div class="col-md-5">
+                <label class="form-label">Material</label>
+                <select formControlName="materialId" class="form-select">
+                  <option value="" disabled>Selecciona un material...</option>
+                  <option *ngFor="let m of materiales" [value]="m.id">{{m.nombre}} ({{m.unidad}})</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Cantidad</label>
+                <input type="number" formControlName="cantidad" class="form-control">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Costo Unitario ($)</label>
+                <input type="number" formControlName="costoUnitario" class="form-control">
+              </div>
+              <div class="col-md-2 text-end">
+                  <label class="form-label d-block">&nbsp;</label>
+                  <button type="button" class="btn btn-danger" (click)="removerDetalle(i)" [disabled]="detalles.length <= 1">
+                      <i class="fas fa-trash"></i>
+                  </button>
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-outline-primary mt-2" (click)="agregarDetalle()">
+            <i class="fas fa-plus"></i> Agregar Material
+          </button>
+        </div>
+        <div class="card-footer text-end">
+            <button type="submit" class="btn btn-success" [disabled]="compraForm.invalid">
+                <i class="fas fa-save me-2"></i>Guardar Compra
+            </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

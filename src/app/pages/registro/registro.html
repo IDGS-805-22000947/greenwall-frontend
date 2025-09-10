@@ -1,59 +1,41 @@
-<div class="row justify-content-center mt-5">
-  <div class="col-md-6 col-lg-5">
-    <div class="card shadow-sm">
-      <div class="card-body p-4">
-        <h3 class="card-title text-center mb-4">Crear una Cuenta</h3>
-        <form #registroForm="ngForm" (ngSubmit)="onSubmit()">
-          <div class="mb-3">
-            <label for="nombreCompleto" class="form-label">Nombre Completo</label>
-            <input type="text" class="form-control" name="nombreCompleto" [(ngModel)]="userInfo.nombreCompleto" required>
-          </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">Correo Electrónico</label>
-            <input type="email" class="form-control" name="email" [(ngModel)]="userInfo.email" required email>
-          </div>
-
-          <div class="mb-3">
-            <label for="password" class="form-label">Contraseña</label>
-            <input 
-              type="password" 
-              class="form-control" 
-              name="password" 
-              [(ngModel)]="userInfo.password" 
-              required 
-              minlength="6"
-              pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).*$"
-              #password="ngModel">
-            
-            <div *ngIf="password.invalid && (password.dirty || password.touched)" class="mt-2 p-2 bg-light border rounded small">
-              <p class="mb-1" [class.text-success]="password.errors?.['minlength'] == null && password.errors?.['required'] == null">
-                <i class="bi" [class.bi-check-circle-fill]="password.errors?.['minlength'] == null && password.errors?.['required'] == null" 
-                   [class.bi-x-circle-fill]="password.errors?.['minlength'] != null || password.errors?.['required'] != null"></i>
-                Al menos 6 caracteres
-              </p>
-              <p class="mb-1" [class.text-success]="!password.errors?.['pattern']">
-                <i class="bi" [class.bi-check-circle-fill]="!password.errors?.['pattern']" [class.bi-x-circle-fill]="password.errors?.['pattern']"></i>
-                Incluye mayúsculas, números y un símbolo (!, *, #, etc.)
-              </p>
-            </div>
-          </div>
-
-          <div *ngIf="serverErrors.length > 0" class="alert alert-danger">
-            <ul class="mb-0 ps-3">
-              <li *ngFor="let error of serverErrors">{{ error }}</li>
-            </ul>
-          </div>
-          <div *ngIf="success" class="alert alert-success">{{ success }}</div>
-
-          <div class="d-grid mt-4">
-            <button type="submit" class="btn btn-primary" [disabled]="registroForm.invalid">Registrarme</button>
-          </div>
-
-          <div class="text-center mt-3">
-            <a routerLink="/login">¿Ya tienes cuenta? Inicia sesión</a>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div *ngIf="!enviado">
+            <h3 class="card-title text-center">Crear Cuenta</h3>
+            <p class="text-center text-muted">Completa tus datos para solicitar el registro.</p>
+            <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label for="nombreCompleto" class="form-label">Nombre Completo</label>
+                <input type="text" formControlName="nombreCompleto" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" formControlName="email" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="nombreEmpresa" class="form-label">Nombre de la Empresa (Opcional)</label>
+                <input type="text" formControlName="nombreEmpresa" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="tel" formControlName="telefono" class="form-control">
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary" [disabled]="registroForm.invalid">Enviar Solicitud</button>
+              </div>
+            </form>
           </div>
           
-        </form>
+          <div *ngIf="enviado" class="text-center py-5">
+            <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+            <h4>¡Solicitud Enviada!</h4>
+            <p>Hemos recibido tu solicitud. Un administrador la revisará y recibirás un correo con tus credenciales de acceso una vez que sea aprobada.</p>
+            <a routerLink="/inicio" class="btn btn-outline-primary">Volver al Inicio</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

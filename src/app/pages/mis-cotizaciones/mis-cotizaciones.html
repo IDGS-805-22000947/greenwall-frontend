@@ -2,9 +2,9 @@
   <h1 class="mb-4">Mi Historial de Cotizaciones</h1>
   <div *ngIf="cargando" class="text-center py-5"><div class="spinner-border"></div></div>
   <div *ngIf="!cargando && cotizaciones.length > 0" class="table-responsive">
-    <table class="table table-hover">
+    <table class="table table-hover align-middle">
       <thead>
-        <tr><th>Fecha</th><th>m²</th><th>Costo Estimado</th><th>Estatus</th></tr>
+        <tr><th>Fecha</th><th>m²</th><th>Costo</th><th>Estatus</th><th>Acciones</th></tr>
       </thead>
       <tbody>
         <tr *ngFor="let c of cotizaciones">
@@ -12,10 +12,20 @@
           <td>{{ c.metrosCuadrados }}</td>
           <td>{{ c.costoTotal | currency:'MXN' }}</td>
           <td>
-            <span class="badge fs-6" [ngClass]="{'bg-primary': c.estatus === 'Nueva', 'bg-success': c.estatus === 'Aprobada', 'bg-danger': c.estatus === 'Rechazada'}">
+            <span class="badge fs-6" [ngClass]="{
+              'bg-primary': c.estatus === 'Nueva', 
+              'bg-success': c.estatus === 'Aprobada', 
+              'bg-danger': c.estatus === 'Rechazada',
+              'bg-secondary': c.estatus === 'Completada'
+            }">
               {{ c.estatus }}
             </span>
             <p *ngIf="c.motivoRechazo" class="small text-danger fst-italic mt-1 mb-0">{{ c.motivoRechazo }}</p>
+          </td>
+          <td>
+            <button *ngIf="c.estatus === 'Aprobada'" class="btn btn-success btn-sm" (click)="realizarCompra(c.id)">
+              <i class="fas fa-shopping-cart me-1"></i> Realizar Compra
+            </button>
           </td>
         </tr>
       </tbody>

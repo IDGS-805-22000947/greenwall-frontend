@@ -1,0 +1,65 @@
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Catálogo de Productos</h1>
+    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#productoModal" (click)="abrirModal()">
+      <i class="fas fa-plus me-2"></i>Nuevo Producto
+    </button>
+  </div>
+
+<div class="table-responsive card">
+  <table class="table table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Nombre del Producto</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of productos">
+        <td>{{ p.id }}</td>
+        <td>{{ p.nombre }}</td>
+        <td class="text-center">
+          <div class="btn-group" role="group">
+            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#productoModal" (click)="abrirModal(p)">
+              <i class="fas fa-edit me-1"></i> Editar
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="eliminarProducto(p.id, p.nombre)">
+              <i class="fas fa-trash-alt me-1"></i> Eliminar
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<div class="modal fade" id="productoModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modoEdicion ? 'Editar Producto' : 'Nuevo Producto' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form [formGroup]="productoForm" (ngSubmit)="guardarProducto()">
+        <div class="modal-body">
+          <div class="mb-3"><label class="form-label">Nombre</label><input type="text" formControlName="nombre" class="form-control"></div>
+          <div class="mb-3"><label class="form-label">Descripción</label><textarea formControlName="descripcion" class="form-control" rows="3"></textarea></div>
+          <div class="mb-3"><label class="form-label">URL de la Imagen</label><input type="text" formControlName="imagenUrl" class="form-control"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Unidad de Venta</label>
+          <select formControlName="unidadDeVenta" class="form-select">
+            <option value="m²">Por Metro Cuadrado (m²)</option>
+            <option value="unidad">Por Unidad (Kit)</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="productoForm.invalid" data-bs-dismiss="modal">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -5,9 +5,9 @@
         <h3 class="card-title text-center mb-4">Iniciar Sesión</h3>
         <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
           <div class="mb-3">
-            <label for="email" class="form-label">Correo Electrónico</label>
-            <input type="email" class="form-control" name="email" [(ngModel)]="credentials.email" required email>
-          </div>
+  <label for="email" class="form-label">Email de Usuario</label>
+  <input type="email" class="form-control" name="email" [(ngModel)]="credentials.email" required email>
+</div>
           <div class="mb-3">
             <label for="password" class="form-label">Contraseña</label>
             <input type="password" class="form-control" name="password" [(ngModel)]="credentials.password" required>

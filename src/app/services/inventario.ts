@@ -1,3 +1,5 @@
+// src/app/services/inventario.service.ts
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -15,7 +17,7 @@ export class InventarioService {
     return this.http.get<any[]>(`${this.apiUrl}/${materialId}`);
   }
 
-  registrarEntrada(entrada: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/entrada`, entrada);
+  realizarAjuste(ajuste: { materialId: number, cantidad: number, motivo: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/ajuste`, ajuste);
   }
 }

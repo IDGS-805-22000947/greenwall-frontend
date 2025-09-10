@@ -7,43 +7,64 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <!-- Menú Principal (condicional) -->
       <ng-container *ngIf="isAdmin$ | async; else publicOrClientMenu">
-        <!-- Menú de Administrador -->
         <ul class="navbar-nav mx-auto">
-          <li class="nav-item"><a class="nav-link" routerLink="/admin/cotizaciones" routerLinkActive="active">Cotizaciones</a></li>
-          <li class="nav-item"><a class="nav-link" routerLink="/admin/inventario" routerLinkActive="active">Inventario</a></li>
-          <li class="nav-item"><a class="nav-link" routerLink="/admin/materiales" routerLinkActive="active">Catálogo Materiales</a></li>
-          <li class="nav-item"><a class="nav-link" routerLink="/admin/receta" routerLinkActive="active">Gestión de Receta</a></li>
+                    <li class="nav-item">
+                <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active">
+                  <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/admin/usuarios" routerLinkActive="active">
+                  <i class="fas fa-users me-1"></i> Usuarios
+                </a>
+              </li>
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/solicitudes" routerLinkActive="active">Solicitudes</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/ventas" routerLinkActive="active">Ventas</a></li> 
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/valoraciones" routerLinkActive="active">Valoraciones</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/cotizaciones" routerLinkActive="active">Cotizaciones</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/compras" routerLinkActive="active">Compras</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/inventario" routerLinkActive="active">Inventario</a></li>
+            
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/admin/proveedores" routerLinkActive="active">Proveedores</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/productos" routerLinkActive="active">Productos</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/receta" routerLinkActive="active">Receta</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/admin/documentos" routerLinkActive="active">Documentos</a></li>
         </ul>
       </ng-container>
+
       <ng-template #publicOrClientMenu>
-        <!-- Menú Público y de Cliente -->
         <ul class="navbar-nav mx-auto">
           <li class="nav-item"><a class="nav-link" routerLink="/inicio" routerLinkActive="active">Inicio</a></li>
           <li class="nav-item"><a class="nav-link" routerLink="/nosotros" routerLinkActive="active">Nosotros</a></li>
           <li class="nav-item"><a class="nav-link" routerLink="/contacto" routerLinkActive="active">Contacto</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/faq" routerLinkActive="active">Preguntas Frecuentes</a></li>
           <li class="nav-item" *ngIf="isLoggedIn$ | async">
             <a class="nav-link" routerLink="/cotizacion" routerLinkActive="active">Cotización</a>
           </li>
         </ul>
       </ng-template>
 
-      <!-- Gestión de Sesión -->
       <ul class="navbar-nav align-items-center">
         <ng-container *ngIf="isLoggedIn$ | async; else loggedOut">
-          <!-- Si el usuario ESTÁ logueado -->
-          <li class="nav-item" *ngIf="!(isAdmin$ | async)">
-            <a class="nav-link" routerLink="/mis-cotizaciones">Mis Cotizaciones</a>
-          </li>
-          <li class="nav-item"><a class="nav-link" (click)="logout()" style="cursor: pointer;">Cerrar Sesión</a></li>
+          <ng-container *ngIf="isAdmin$ | async; else clientMenu">
+             <li class="nav-item"><a class="nav-link" (click)="logout()" style="cursor: pointer;">Cerrar Sesión (Admin)</a></li>
+          </ng-container>
+          <ng-template #clientMenu>
+            <li class="nav-item"><a class="nav-link" routerLink="/perfil" routerLinkActive="active">Mi Perfil</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/mis-cotizaciones" routerLinkActive="active">Mis Cotizaciones</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/mis-compras" routerLinkActive="active">Mis Compras</a></li> 
+            <li class="nav-item"><a class="nav-link" (click)="logout()" style="cursor: pointer;">Cerrar Sesión</a></li>
+          </ng-template>
         </ng-container>
         
-        <!-- Si el usuario NO ESTÁ logueado -->
         <ng-template #loggedOut>
           <li class="nav-item"><a class="nav-link" routerLink="/registro">Crear Cuenta</a></li>
           <li class="nav-item ms-lg-2">
-            <a class="btn btn-success" routerLink="/cotizacion">Cotizar ahora</a>
+            <a class="btn btn-success" routerLink="/cotizacion">Iniciar Sesión</a>
           </li>
         </ng-template>
       </ul>

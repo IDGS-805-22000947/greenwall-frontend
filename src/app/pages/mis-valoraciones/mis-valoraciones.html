@@ -1,0 +1,42 @@
+<div class="container my-5">
+  <h1 class="mb-4">Tu Opinión sobre GreenWall</h1>
+
+  <div *ngIf="!estadoMiValoracion" class="text-center">
+    <p>Verificando tu estado...</p>
+  </div>
+
+  <div *ngIf="estadoMiValoracion">
+    <div *ngIf="estadoMiValoracion.puedeOpinar; else noPuedeOpinar">
+      <div class="card bg-light shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">¡Comparte tu experiencia!</h5>
+          <p class="card-text">Tu opinión nos ayuda a mejorar. Solo puedes enviar una valoración por mes.</p>
+          
+          <form [formGroup]="valoracionForm" (ngSubmit)="enviarOpinion()">
+            <div class="mb-3">
+              <label class="form-label">Calificación:</label>
+              <div class="star-rating">
+                <button *ngFor="let star of [1, 2, 3, 4, 5]" type="button" class="btn btn-link star" (click)="setCalificacion(star)" [class.selected]="valoracionForm.get('calificacion')?.value >= star">
+                  <i class="fas fa-star"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="comentario" class="form-label">Comentario:</label>
+              <textarea id="comentario" class="form-control" rows="4" formControlName="comentario" placeholder="Escribe aquí lo que piensas de nuestro servicio y producto..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-success" [disabled]="valoracionForm.invalid">Enviar Opinión</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noPuedeOpinar>
+      <div class="alert alert-info text-center">
+        <i class="fas fa-check-circle me-2"></i>{{ estadoMiValoracion.mensaje }}
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="container my-5">
+  <h1 class="mb-4">Dashboard</h1>
+
+  <div *ngIf="!data" class="text-center">
+    <p>Cargando datos...</p>
+  </div>
+
+  <div *ngIf="data">
+    <div class="row">
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs fw-bold text-primary text-uppercase mb-1">Proveedores Activos</div>
+                <div class="h5 mb-0 fw-bold text-gray-800">{{ data.proveedoresActivos }}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-truck fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs fw-bold text-success text-uppercase mb-1">Solicitudes Pendientes</div>
+                <div class="h5 mb-0 fw-bold text-gray-800">{{ data.solicitudesPendientes }}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs fw-bold text-warning text-uppercase mb-1">Materiales con Bajo Stock</div>
+                <div class="h5 mb-0 fw-bold text-gray-800">{{ data.materialesEnBajoStock }}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-boxes-stacked fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4" *ngIf="barChartData">
+      <div class="col-12">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 fw-bold text-primary">Compras en los Últimos 6 Meses</h6>
+          </div>
+          <div class="card-body">
+            <div style="height: 400px;">
+              <canvas baseChart [data]="barChartData" [options]="barChartOptions" type="bar">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

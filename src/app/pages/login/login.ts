@@ -34,13 +34,16 @@ export class LoginComponent {
       return;
     }
     this.error = null;
+
     this.authService.login(this.credentials).subscribe({
-      next: () => {
-        const role = this.authService.getUserRole();
+      // El rol ahora llega directamente como un parámetro en 'next'
+      next: (role: string | null) => { 
         if (role === 'Administrador') {
+          // Si es Admin, va al panel de administración
           this.router.navigate(['/admin']);
         } else {
-          this.router.navigate(['/cotizacion']);
+          // Si es Cliente, va a su perfil
+          this.router.navigate(['/perfil']);
         }
       },
       error: (err) => {

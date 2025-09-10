@@ -1,19 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { CotizacionService } from '../../services/cotizacion.service';
 import { AuthService } from '../../services/auth.service';
-import { Router, RouterLink } from '@angular/router';
+import { ProductoService } from '../../services/producto';
+import { Producto } from '../../models/producto.model';
+import { PeticionCotizacion, ResultadoCotizacion } from '../../models/cotizacion.model';
 
 @Component({
   selector: 'app-cotizacion',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink], // Añadimos RouterLink para el enlace
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './cotizacion.component.html',
 })
-export class CotizacionComponent {
-  peticion = { productoId: 1, metrosCuadrados: 10 };
-  resultado: any = null;
+export class CotizacionComponent implements OnInit {
+  productos: Producto[] = [];
+  productoSeleccionado: Producto | null = null; // Para saber qué campo mostrar
+  peticion: PeticionCotizacion = { productoId: 0, metrosCuadrados: 10, cantidadUnidades: 1 };
+  resultado: ResultadoCotizacion | null = null;
   cargando = false;
   error: string | null = null;
   confirmado = false;
@@ -21,8 +26,32 @@ export class CotizacionComponent {
   constructor(
     private cotizacionService: CotizacionService,
     public authService: AuthService,
+    private productoService: ProductoService,
     private router: Router
   ) {}
+
+  ngOnInit(): void {
+    this.productoService.getProductos().subscribe(data => {
+      this.productos = data;
+      if (this.productos.length > 0) {
+        // --- ESTA ES LA CORRECCIÓN CLAVE ---
+        // Llamamos a onProductoChange para inicializar el estado
+        this.onProductoChange(this.productos[0].id);
+      }
+    });
+  }
+
+  // Esta función ahora se encarga de actualizar todo cuando cambia el producto
+  onProductoChange(productoId: number): void {
+    this.productoSeleccionado = this.productos.find(p => p.id === Number(productoId)) || null;
+    if (this.productoSeleccionado) {
+      this.peticion.productoId = this.productoSeleccionado.id;
+    }
+    // Reseteamos cualquier cálculo anterior al cambiar de producto
+    this.resultado = null;
+    this.error = null;
+    this.confirmado = false;
+  }
 
   calcular(): void {
     this.cargando = true;
@@ -30,14 +59,13 @@ export class CotizacionComponent {
     this.error = null;
     this.confirmado = false;
     
-    // Se llama al método correcto
     this.cotizacionService.previsualizarCotizacion(this.peticion).subscribe({
-      next: (data: any) => { // Se añade el tipo 'any' para solucionar el error
+      next: (data) => {
         this.resultado = data;
         this.cargando = false;
       },
-      error: (err: any) => { // Se añade el tipo 'any'
-        this.error = "Hubo un error al calcular. Intenta de nuevo.";
+      error: (err) => {
+        this.error = "Hubo un error al calcular. Verifica que el producto tenga una receta activa.";
         this.cargando = false;
       }
     });
@@ -45,20 +73,18 @@ export class CotizacionComponent {
 
   confirmar(): void {
     if (!this.authService.isLoggedIn()) {
-      alert("Por favor, inicia sesión para confirmar tu cotización.");
       this.router.navigate(['/login']);
       return;
     }
     this.cargando = true;
     
-    // Se llama al método correcto
     this.cotizacionService.confirmarCotizacion(this.peticion).subscribe({
       next: () => {
         this.cargando = false;
         this.confirmado = true;
         this.resultado = null;
       },
-      error: (err: any) => { // Se añade el tipo 'any'
+      error: (err) => {
         this.error = "Error al confirmar la cotización. Inténtalo de nuevo.";
         this.cargando = false;
       }
